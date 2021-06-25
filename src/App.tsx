@@ -1,14 +1,13 @@
 import React from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import './App.global.css';
-import Home from './components/Home/index';
+import Router from './route';
+import { Provider } from 'react-redux';
+import store from './redux/store';
 
 export default function App() {
   return (
-    <Router>
-      <Switch>
-        <Route path="/" component={Home} />
-      </Switch>
-    </Router>
+    <Provider store={store}>
+      <Router />
+    </Provider>
   );
 }

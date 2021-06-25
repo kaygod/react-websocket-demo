@@ -1,5 +1,17 @@
 const WebSocket = require('ws');
 import { actionType } from '../redux/types';
+import { messageResolve } from './common';
+import { v1 as uuid } from 'uuid';
+
+const callback_list: { [prop: string]: any } = {};
+
+export interface messageType {
+  command: string;
+  data: any;
+  request_id?: string;
+  resolve?: Function;
+  reject?: Function;
+}
 
 const wsMiddleware = () => {
   let socket: any = {}; // 存储websocket连接
@@ -20,8 +32,13 @@ const wsMiddleware = () => {
   /**
    * 收到发送过来的消息
    */
-  const onMessage = (store: any, data: any) => {
-    store.dispatch({});
+  const onMessage = (store: any, response: messageType) => {
+    let action;
+    if (response.request_id && (action = callback_list[response.request_id])) {
+      // 该请求缓存过了
+      action.resolve(response.data);
+    }
+    messageResolve(store, response);
   };
 
   /**
@@ -64,9 +81,21 @@ const wsMiddleware = () => {
         break;
       // 向后台推送消息
       case 'PUSH_MESSAGE':
+        const { command, data } = action.value;
+        const message = {
+          command,
+          data,
+          request_id: uuid(),
+        };
+        if (action.resolve) {
+          callback_list[message.request_id] = action;
+        }
+        socket.send(message); // 推送消息
         break;
       // 主动断开连接
       case 'DIS_CONNECT':
+        socket.close();
+        onClose(store);
         break;
       default:
         next(action);
