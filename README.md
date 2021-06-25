@@ -2,8 +2,10 @@
 
 this is demo of using Websocket in React framework
 
-## clone this project in local desktop
+# Install
 
-## run command `npm install` to install all dependencies
+- clone this project in local desktop
 
-## run command `npm run start` to startup project
+- run command `npm install` to install all dependencies
+
+- run command `npm run start` to startup project
