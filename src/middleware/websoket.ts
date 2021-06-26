@@ -1,7 +1,8 @@
-const WebSocket = require('ws');
+const WS = window.require('ws');
 import { actionType } from '../redux/types';
 import { messageResolve } from './common';
 import { v1 as uuid } from 'uuid';
+const { Agent } = require('https');
 
 const callback_list: { [prop: string]: any } = {};
 
@@ -33,6 +34,9 @@ const wsMiddleware = () => {
    * 收到发送过来的消息
    */
   const onMessage = (store: any, response: messageType) => {
+    if(typeof response === "string"){
+      response = JSON.parse(response);
+    }
     let action;
     if (response.request_id && (action = callback_list[response.request_id])) {
       // 该请求缓存过了
@@ -53,20 +57,27 @@ const wsMiddleware = () => {
       },
     });
   };
+  
+  //定时器
+  let timer : null | NodeJS.Timeout = null;
 
   //返回中间件函数
   return (store: any) => (next: Function) => (action: actionType) => {
     switch (action.type) {
       // 建立连接
       case 'CONNECT_READY':
-        let timer: null | NodeJS.Timeout = setInterval(() => {
-          if (socket.readyState == 1 || socket.readyState == 2) {
+        timer = setInterval(() => {
+          if (socket != null && (socket.readyState == 1 || socket.readyState == 2)) {
             //已经连接成功了
             timer && clearInterval(timer);
             timer = null;
             return;
           }
-          socket = new WebSocket('ws://www.host.com/path');
+          try {
+            socket = new WS('ws://localhost:8080');   
+          } catch (error) {
+            console.log(error);
+          }
           socket.on('open', () => {
             onOpen(store);
           });
@@ -90,7 +101,7 @@ const wsMiddleware = () => {
         if (action.resolve) {
           callback_list[message.request_id] = action;
         }
-        socket.send(message); // 推送消息
+        socket.send(JSON.stringify(message)); // 推送消息
         break;
       // 主动断开连接
       case 'DIS_CONNECT':

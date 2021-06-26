@@ -9,6 +9,10 @@ export default (state = defaultState, action: actionType) => {
     case 'LOGIN':
       return state;
       break;
+    case "UPDATE_INPUT":
+      const { type,data } = action.value;
+      return {...state,[type]:data};
+      break;  
     default:
       return state;
   }

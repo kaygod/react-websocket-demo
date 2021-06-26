@@ -11,12 +11,11 @@ export const messageResolve = (store: any, response: messageType) => {
   });
   //公共功能的开发
   switch (response.command) {
-    //消息通知,需要弹框提醒通知的消息
-    case 'message_inform':
-      alert(response.data.content);
+    case 'message_inform': //消息通知,可以用弹框提醒
+      console.log(`后端推送一条通知:${JSON.stringify(response.data)}`);
       break;
-    //版本升级
-    case 'software_upgrading':
+    case 'software_upgrading'://版本升级
+      console.log("触发版本升级的窗口");
       break;
   }
 };

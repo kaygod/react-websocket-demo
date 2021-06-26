@@ -10,6 +10,8 @@
     "lint": "cross-env NODE_ENV=development eslint . --cache --ext .js,.jsx,.ts,.tsx",
     "package": "rm -rf src/dist && yarn build && electron-builder build --publish never",
     "postinstall": "node -r @babel/register .erb/scripts/CheckNativeDep.js && electron-builder install-app-deps && yarn cross-env NODE_ENV=development webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.babel.js && opencollective-postinstall && yarn-deduplicate yarn.lock",
+    "start:server":"node ./server/index.js",
+    "dev":"concurrently \"yarn start\" \"yarn start:server\"",
     "start": "node -r @babel/register ./.erb/scripts/CheckPortInUse.js && yarn start:renderer",
     "start:main": "cross-env NODE_ENV=development electron -r ./.erb/scripts/BabelRegister ./src/main.dev.ts",
     "start:renderer": "cross-env NODE_ENV=development webpack serve --config ./.erb/configs/webpack.config.renderer.dev.babel.js",
@@ -185,6 +187,7 @@
     "@types/react-dom": "^16.9.9",
     "@types/react-router-dom": "^5.1.6",
     "@types/react-test-renderer": "^16.9.3",
+    "@types/styled-components": "^5.1.10",
     "@types/uuid": "^8.3.0",
     "@types/webpack-env": "^1.15.2",
     "@typescript-eslint/eslint-plugin": "^4.8.1",
@@ -253,8 +256,8 @@
     "electron-log": "^4.2.4",
     "electron-updater": "^4.3.4",
     "history": "^5.0.0",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
     "react-redux": "^7.2.4",
     "react-router-dom": "^5.2.0",
     "redux": "^4.1.0",
@@ -262,7 +265,8 @@
     "regenerator-runtime": "^0.13.5",
     "source-map-support": "^0.5.19",
     "styled-components": "^5.3.0",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "ws": "^7.5.0"
   },
   "devEngines": {
     "node": ">=10.x",

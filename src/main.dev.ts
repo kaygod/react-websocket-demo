@@ -56,7 +56,7 @@ const createWindow = async () => {
     process.env.NODE_ENV === 'development' ||
     process.env.DEBUG_PROD === 'true'
   ) {
-    await installExtensions();
+    //await installExtensions();
   }
 
   const RESOURCES_PATH = app.isPackaged
@@ -74,6 +74,7 @@ const createWindow = async () => {
     icon: getAssetPath('icon.png'),
     webPreferences: {
       nodeIntegration: true,
+      webSecurity: false
     },
   });
 
