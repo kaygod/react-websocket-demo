@@ -2,7 +2,6 @@ const WS = window.require('ws');
 import { actionType } from '../redux/types';
 import { messageResolve } from './common';
 import { v1 as uuid } from 'uuid';
-const { Agent } = require('https');
 
 const callback_list: { [prop: string]: any } = {};
 
@@ -39,6 +38,7 @@ const wsMiddleware = () => {
     }
     let action;
     if (response.request_id && (action = callback_list[response.request_id])) {
+      delete callback_list[response.request_id];
       // 该请求缓存过了
       action.resolve(response.data);
     }
